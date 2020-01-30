@@ -20,9 +20,10 @@ sub_folders <- list.files()
 raw_location <- grep("raw", sub_folders, value=T)
 path_to_raw <- (paste0(getwd(), "/", raw_location))
 columns <- read.csv(paste0(path_to_raw, "/", "B16004-columns.csv"), stringsAsFactors = F, header=T, check.names=F)
+columns
 
 ctGeos <- getCTGeos()
-yearList = c(2010:2016)
+yearList = c(2010:2018)
 tn = "B16004"
 acsdata <- getACSData(ctGeos, yearList=yearList, table = tn)
 
@@ -266,10 +267,15 @@ x65plusyears.and.over.Not.at.All.p <- divide.acs(x65plusyears.and.over.Not.at.Al
     numbers_all <- rbind(numbers, numbers.moe)
     
     numbers_all$Column <- trimws(numbers_all$Column)
-    names(numbers_all)[names(numbers_all) == "HD01_VD01.Estimate; Total:"] <- "Total:Total"
-    names(numbers_all)[names(numbers_all) == "HD01_VD03.Estimate; 5 to 17 years: - Speak only English"] <- "5 to 17 years:Native"
-    names(numbers_all)[names(numbers_all) == "HD01_VD25.Estimate; 18 to 64 years: - Speak only English"] <- "18 to 64 years:Native"
-    names(numbers_all)[names(numbers_all) == "HD01_VD47.Estimate; 65 years and over: - Speak only English"] <- "65 years and over years:Native"
+    #names(numbers_all)[grep( "HD01_VD01.Estimate; Total:", names(numbers_all))] <- "Total:Total"
+    #names(numbers_all)[names(numbers_all) == "HD01_VD03.Estimate; 5 to 17 years: - Speak only English"] <- "5 to 17 years:Native"
+    #names(numbers_all)[names(numbers_all) == "HD01_VD25.Estimate; 18 to 64 years: - Speak only English"] <- "18 to 64 years:Native"
+    #names(numbers_all)[names(numbers_all) == "HD01_VD47.Estimate; 65 years and over: - Speak only English"] <- "65 years and over years:Native"
+    
+    names(numbers_all)[grep( "Estimate.*Total:*$", names(numbers_all))] <- "Total:Total"
+    names(numbers_all)[grep( "Estimate.*5 to 17 years.*Speak only English$", names(numbers_all))] <- "5 to 17 years:Native"
+    names(numbers_all)[grep( "Estimate.*18 to 64 years.*Speak only English$", names(numbers_all))] <- "18 to 64 years:Native"
+    names(numbers_all)[grep( "Estimate.*65 years and over.*Speak only English$", names(numbers_all))] <- "65 years and over years:Native"
 
     numbers_all <- melt(
             numbers_all,
@@ -313,10 +319,15 @@ x65plusyears.and.over.Not.at.All.p <- divide.acs(x65plusyears.and.over.Not.at.Al
 }
 options(scipen=9999)
 
-dataset$Column[dataset$Column == "HD01_VD01.Estimate;  Total: "] <- "Total:All"
-dataset$Column[dataset$Column == "HD01_VD03.Estimate;  5 to 17 years: Speak only English "] <- "5 to 17 years:Native"
-dataset$Column[dataset$Column == "HD01_VD25.Estimate;  18 to 64 years: Speak only English " ] <- "18 to 64 years:Native"
-dataset$Column[dataset$Column == "HD01_VD47.Estimate;  65 years and over: Speak only English "] <- "65 years and over:Native"
+#dataset$Column[dataset$Column == "HD01_VD01.Estimate;  Total: "] <- "Total:All"
+#dataset$Column[dataset$Column == "HD01_VD03.Estimate;  5 to 17 years: Speak only English "] <- "5 to 17 years:Native"
+#dataset$Column[dataset$Column == "HD01_VD25.Estimate;  18 to 64 years: Speak only English " ] <- "18 to 64 years:Native"
+#dataset$Column[dataset$Column == "HD01_VD47.Estimate;  65 years and over: Speak only English "] <- "65 years and over:Native"
+
+names(dataset$Column)[grep( "Estimate.*Total:*$", dataset$Column)] <- "Total:All"
+names(dataset$Column)[grep( "Estimate.*5 to 17 years.*Speak only English$", dataset$Column)] <- "5 to 17 years:Native"
+names(dataset$Column)[grep( "Estimate.*18 to 64 years.*Speak only English$", dataset$Column)] <- "18 to 64 years:Native"
+names(dataset$Column)[grep( "Estimate.*65 years and over.*Speak only English$", dataset$Column)] <- "65 years and over years:Native"
 
 dataset <- dataset[dataset$Column != "Column",]
 
@@ -354,7 +365,7 @@ dataset <- dataset %>%
 
 write.table(
     dataset,
-    file.path("data", "english-proficiency-by-age-2016.csv"),
+    file.path("data", "english-proficiency-by-age-2018.csv"),
     sep = ",",
     row.names = F,
     na = "-9999"
