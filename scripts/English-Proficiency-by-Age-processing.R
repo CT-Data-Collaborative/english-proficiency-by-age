@@ -23,7 +23,7 @@ columns <- read.csv(paste0(path_to_raw, "/", "B16004-columns.csv"), stringsAsFac
 columns
 
 ctGeos <- getCTGeos()
-yearList = c(2010:2018)
+yearList = c(2010:2019)
 tn = "B16004"
 acsdata <- getACSData(ctGeos, yearList=yearList, table = tn)
 
@@ -365,7 +365,7 @@ dataset <- dataset %>%
 
 write.table(
     dataset,
-    file.path("data", "english-proficiency-by-age-2018.csv"),
+    file.path("data", "english-proficiency-by-age-2019.csv"),
     sep = ",",
     row.names = F,
     na = "-9999"
